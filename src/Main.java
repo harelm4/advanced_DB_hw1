@@ -6,6 +6,8 @@ public class Main {
 
         String connectionUrl = "jdbc:sqlserver://132.72.64.124:1433;databaseName=moshayof;user=moshayof;password=7dYN61wB;encrypt=false;";
         Assignment mc=new Assignment(connectionUrl,"moshayof","7dYN61wB");
-        mc.printSimilarItems(new Long(2));
+        //mc.printSimilarItems(new Long(2));
+        mc.calculateSimilarity();
+
     }
 }

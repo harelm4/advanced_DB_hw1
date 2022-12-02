@@ -47,24 +47,41 @@ public class Assignment {
             );
 
             ResultSet rs=ps.executeQuery();
+
+            ArrayList<int[]> check_list = new ArrayList<>();
             while (rs.next()){
                 int med1=rs.getInt(1);
                 int med2=rs.getInt(2);
-                CallableStatement csSim=con.prepareCall("{? = call SIMCALCULATION(?,?,?)}");
-                csSim.registerOutParameter(1,Types.FLOAT);
-                csSim.setInt(2,med1);
-                csSim.setInt(3,med2);
-                csSim.setFloat(4,maxDistance);
-                csSim.execute();
+                int[] arr = {med1,med2};
+                boolean flag = false;
+                for (int i = 0; i < check_list.size(); i++) {
+                    if (check_list.get(i)[0]== med2 && check_list.get(i)[1]== med1){
+                        flag=true;
+                        break;
+                    }
 
-                float sim=csSim.getFloat(1);
+                }
 
-                PreparedStatement psSim=con.prepareStatement("insert into Similarity values(?,?,?)");
-                psSim.setInt(1,med1);
-                psSim.setInt(2,med2);
-                psSim.setFloat(3,sim);
-                psSim.executeUpdate();
-                psSim.close();
+                if (!flag){
+                    CallableStatement csSim = con.prepareCall("{? = call SIMCALCULATION(?,?,?)}");
+                    csSim.registerOutParameter(1, Types.FLOAT);
+                    csSim.setInt(2, med1);
+                    csSim.setInt(3, med2);
+                    csSim.setFloat(4, maxDistance);
+                    csSim.execute();
+
+                    float sim = csSim.getFloat(1);
+
+                    PreparedStatement psSim = con.prepareStatement("insert into Similarity values(?,?,?)");
+                    psSim.setInt(1, med1);
+                    psSim.setInt(2, med2);
+                    psSim.setFloat(3, sim);
+                    psSim.executeUpdate();
+                    psSim.close();
+
+                    check_list.add(arr);
+
+                }
             }
             ps.close();
     }
